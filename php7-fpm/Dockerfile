@@ -1,5 +1,5 @@
 # See https://github.com/docker-library/php/blob/4677ca134fe48d20c820a19becb99198824d78e3/7.0/fpm/Dockerfile
-FROM php:7.0-fpm
+FROM php:7.1-fpm
 
 MAINTAINER Maxence POUTORD <maxence.poutord@gmail.com>
 
@@ -17,8 +17,16 @@ RUN ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
 RUN "date"
 
 # Type docker-php-ext-install to see available extensions
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql opcache
 
+RUN apt-get install -y libfreetype6-dev
+RUN apt-get install -y libgd-dev
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr
+RUN docker-php-ext-install gd
+
+# APCu
+RUN pecl install apcu
+RUN docker-php-ext-enable apcu
 
 # install xdebug
 RUN pecl install xdebug
